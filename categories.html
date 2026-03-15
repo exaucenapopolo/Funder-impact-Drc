@@ -6,10 +6,13 @@
     <title>Catégories - Founder Impact Awards RDC</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Même style que index.html, avec quelques ajustements */
+        /* Styles généraux (similaires à index.html) */
         * {
             margin: 0;
             padding: 0;
@@ -17,8 +20,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0a0a;
             color: #f0f0f0;
             line-height: 1.6;
         }
@@ -28,44 +31,37 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 5%;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 2px solid #FFD700;
-            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 8px gold);
+            height: 60px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 2rem;
+            gap: 2rem;
         }
 
         .nav-links a {
             color: #fff;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s, text-shadow 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
             position: relative;
         }
 
-        .nav-links a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        .nav-links a::after {
+        .nav-links a::before {
             content: '';
             position: absolute;
             bottom: -5px;
@@ -76,7 +72,11 @@
             transition: width 0.3s;
         }
 
-        .nav-links a:hover::after {
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+
+        .nav-links a:hover::before {
             width: 100%;
         }
 
@@ -91,65 +91,77 @@
             height: 3px;
             background: #FFD700;
             margin: 3px 0;
-            transition: 0.3s;
         }
 
         main {
-            margin-top: 90px;
+            margin-top: 100px;
             padding: 2rem 5%;
         }
 
         h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             color: #FFD700;
-            text-align: center;
             margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            text-align: center;
         }
 
-        h2 {
+        .categories-section {
+            margin-bottom: 4rem;
+        }
+
+        .categories-section h2 {
+            font-family: 'Playfair Display', serif;
             font-size: 2rem;
             color: #C0C0C0;
-            margin: 3rem 0 1.5rem;
+            margin-bottom: 1.5rem;
             border-left: 5px solid #FFD700;
             padding-left: 1rem;
         }
 
-        .categories-list {
+        .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
 
-        .category-item {
-            background: rgba(255,255,255,0.03);
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
+        .category-card {
+            background: rgba(20,20,20,0.8);
             border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
             transition: all 0.3s;
-            font-size: 1.1rem;
-            color: #f0f0f0;
+            backdrop-filter: blur(5px);
         }
 
-        .category-item:hover {
+        .category-card:hover {
             border-color: #FFD700;
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(255,215,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255,215,0,0.2);
         }
 
-        .special {
+        .category-card h3 {
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .category-card p {
+            color: #C0C0C0;
+            font-size: 0.9rem;
+        }
+
+        .special .category-card {
             background: rgba(255,215,0,0.05);
             border-color: #B8860B;
         }
 
         footer {
             background: #050505;
-            padding: 2rem 5%;
+            padding: 2rem 5% 1rem;
             text-align: center;
             border-top: 1px solid #333;
-            margin-top: 4rem;
+            margin-top: 3rem;
         }
 
         footer p {
@@ -167,7 +179,7 @@
                 display: none;
                 flex-direction: column;
                 width: 100%;
-                background: rgba(10, 10, 10, 0.98);
+                background: rgba(10,10,10,0.98);
                 position: absolute;
                 top: 70px;
                 left: 0;
@@ -176,9 +188,6 @@
             }
             .nav-links.active {
                 display: flex;
-            }
-            .nav-links li {
-                margin: 1rem 0;
             }
             .burger {
                 display: flex;
@@ -192,7 +201,7 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Logo">
         </div>
         <ul class="nav-links">
             <li><a href="index.html">Accueil</a></li>
@@ -211,38 +220,42 @@
     <main>
         <h1>Catégories de récompenses</h1>
 
-        <h2>AWARDS – CATÉGORIES DES FONDATEURS</h2>
-        <div class="categories-list">
-            <div class="category-item">Fondateur de l'Année</div>
-            <div class="category-item">Jeune Fondateur de l'Année</div>
-            <div class="category-item">Femme Fondatrice de l'Année</div>
-            <div class="category-item">Startup Innovante de l'Année</div>
-            <div class="category-item">Entreprise à Impact Social</div>
-            <div class="category-item">Fondateur dans le Commerce & Import-Export</div>
-            <div class="category-item">Fondateur dans la Distribution</div>
-            <div class="category-item">Fondateur dans l'E-commerce</div>
-            <div class="category-item">Fondateur d'Agence de Communication</div>
-            <div class="category-item">Fondateur de Média en Ligne</div>
-            <div class="category-item">Fondateur d'Agence de Marketing Digital</div>
-            <div class="category-item">Créateur de Plateforme Digitale</div>
-            <div class="category-item">Fondateur dans la Mode</div>
-            <div class="category-item">Fondateur de Maison de Production</div>
-            <div class="category-item">Fondateur d'Entreprise Culturelle</div>
-            <div class="category-item">Fondateur d'Entreprise Immobilière</div>
-            <div class="category-item">Fondateur dans le BTP</div>
-            <div class="category-item">Fondateur de Restaurant</div>
-            <div class="category-item">Fondateur d'Hôtel</div>
-            <div class="category-item">Fondateur Agence Event & Wedding Planning</div>
-            <div class="category-item">Fondateur de Startup Tech</div>
-            <div class="category-item">Innovation Technologique de l'Année</div>
+        <div class="categories-section">
+            <h2>AWARDS – CATÉGORIES DES FONDATEURS</h2>
+            <div class="categories-grid">
+                <div class="category-card"><h3>Fondateur de l'Année</h3><p>Reconnaît un leader exceptionnel ayant eu un impact majeur.</p></div>
+                <div class="category-card"><h3>Jeune Fondateur de l'Année</h3><p>Pour un entrepreneur de moins de 35 ans au parcours inspirant.</p></div>
+                <div class="category-card"><h3>Femme Fondatrice de l'Année</h3><p>Célébre le leadership féminin dans l'entrepreneuriat.</p></div>
+                <div class="category-card"><h3>Startup Innovante de l'Année</h3><p>Récompense la startup la plus innovante et prometteuse.</p></div>
+                <div class="category-card"><h3>Entreprise à Impact Social</h3><p>Met en lumière les entreprises qui changent la société.</p></div>
+                <div class="category-card"><h3>Fondateur dans le Commerce & Import-Export</h3></div>
+                <div class="category-card"><h3>Fondateur dans la Distribution</h3></div>
+                <div class="category-card"><h3>Fondateur dans l'E-commerce</h3></div>
+                <div class="category-card"><h3>Fondateur d'Agence de Communication</h3></div>
+                <div class="category-card"><h3>Fondateur de Média en Ligne</h3></div>
+                <div class="category-card"><h3>Fondateur d'Agence de Marketing Digital</h3></div>
+                <div class="category-card"><h3>Créateur de Plateforme Digitale</h3></div>
+                <div class="category-card"><h3>Fondateur dans la Mode</h3></div>
+                <div class="category-card"><h3>Fondateur de Maison de Production</h3></div>
+                <div class="category-card"><h3>Fondateur d'Entreprise Culturelle</h3></div>
+                <div class="category-card"><h3>Fondateur d'Entreprise Immobilière</h3></div>
+                <div class="category-card"><h3>Fondateur dans le BTP</h3></div>
+                <div class="category-card"><h3>Fondateur de Restaurant</h3></div>
+                <div class="category-card"><h3>Fondateur d'Hôtel</h3></div>
+                <div class="category-card"><h3>Fondateur Agence Event & Wedding Planning</h3></div>
+                <div class="category-card"><h3>Fondateur de Startup Tech</h3></div>
+                <div class="category-card"><h3>Innovation Technologique de l'Année</h3></div>
+            </div>
         </div>
 
-        <h2>PRIX SPÉCIAUX</h2>
-        <div class="categories-list">
-            <div class="category-item special">Prix Leadership Inspirant</div>
-            <div class="category-item special">Prix Impact Communautaire</div>
-            <div class="category-item special">Prix Carrière Exemplaire</div>
-            <div class="category-item special">Prix Révélation de l'Année</div>
+        <div class="categories-section special">
+            <h2>PRIX SPÉCIAUX</h2>
+            <div class="categories-grid">
+                <div class="category-card"><h3>Prix Leadership Inspirant</h3><p>Pour un leader dont la vision et l'intégrité inspirent.</p></div>
+                <div class="category-card"><h3>Prix Impact Communautaire</h3><p>Reconnaît les actions significatives en faveur de la communauté.</p></div>
+                <div class="category-card"><h3>Prix Carrière Exemplaire</h3><p>Honore un parcours entrepreneurial remarquable.</p></div>
+                <div class="category-card"><h3>Prix Révélation de l'Année</h3><p>Distingue un nouvel entrepreneur à fort potentiel.</p></div>
+            </div>
         </div>
     </main>
 
@@ -252,20 +265,6 @@
     </footer>
 
     <script>
-        // Menu burger
-        const burger = document.querySelector('.burger');
-        const navLinks = document.querySelector('.nav-links');
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Firebase initialization
         const firebaseConfig = {
             apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
             authDomain: "monsiteweb-beaee.firebaseapp.com",
@@ -277,6 +276,17 @@
             measurementId: "G-WVQ4PKQLQP"
         };
         firebase.initializeApp(firebaseConfig);
+
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
     </script>
 </body>
 </html>

@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Founder Impact Awards RDC - Accueil</title>
+    <title>Founder Impact Awards RDC | Accueil</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* RESET & BASE */
         * {
             margin: 0;
             padding: 0;
@@ -16,57 +22,86 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0a0a;
             color: #f0f0f0;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Barre de navigation */
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #FFD700, #C0C0C0);
+        }
+
+        /* NAVBAR */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 1rem 5%;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 2px solid #FFD700;
-            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s;
         }
 
         .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 8px gold);
+            height: 60px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+            transition: transform 0.3s;
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 2rem;
+            gap: 2rem;
         }
 
         .nav-links a {
             color: #fff;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s, text-shadow 0.3s;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
             position: relative;
         }
 
-        .nav-links a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        .nav-links a::after {
+        .nav-links a::before {
             content: '';
             position: absolute;
             bottom: -5px;
@@ -77,7 +112,11 @@
             transition: width 0.3s;
         }
 
-        .nav-links a:hover::after {
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+
+        .nav-links a:hover::before {
             width: 100%;
         }
 
@@ -95,68 +134,106 @@
             transition: 0.3s;
         }
 
-        /* Hero section */
+        /* HERO SECTION */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://via.placeholder.com/1920x1080/1a1a1a/808080?text=Founder+Impact+Awards') center/cover no-repeat;
+            background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%), url('https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover no-repeat fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 0 5%;
-            margin-top: 70px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-content h1 {
-            font-size: 4rem;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255,215,0,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            color: #FFD700;
+            text-shadow: 0 0 30px rgba(255,215,0,0.5);
             margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            animation: fadeInUp 1s ease-out;
+            animation: fadeInDown 1s ease-out;
         }
 
-        .hero-content p {
+        .hero p {
             font-size: 1.3rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             color: #C0C0C0;
             animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
         }
 
         .btn {
             display: inline-block;
             padding: 1rem 2.5rem;
-            margin: 0 0.5rem;
-            border: 2px solid #FFD700;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s;
-            animation: fadeInUp 1s ease-out 0.4s both;
+            border: 2px solid transparent;
         }
 
         .btn-primary {
             background: #FFD700;
             color: #0a0a0a;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
         }
 
         .btn-primary:hover {
             background: transparent;
             color: #FFD700;
-            box-shadow: 0 0 20px #FFD700;
+            border-color: #FFD700;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,215,0,0.4);
         }
 
         .btn-secondary {
             background: transparent;
             color: #FFD700;
+            border-color: #FFD700;
         }
 
         .btn-secondary:hover {
             background: #FFD700;
             color: #0a0a0a;
-            box-shadow: 0 0 20px #FFD700;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeInUp {
@@ -170,111 +247,261 @@
             }
         }
 
-        /* Sections générales */
+        /* SECTIONS */
         section {
-            padding: 5rem 10%;
+            padding: 6rem 5%;
         }
 
-        h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #FFD700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* PRESENTATION SECTION */
+        .presentation {
+            background: #0f0f0f;
             position: relative;
         }
 
-        h2::after {
+        .presentation::before {
             content: '';
-            display: block;
-            width: 80px;
-            height: 3px;
-            background: #FFD700;
-            margin: 1rem auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="%23FFD700" stroke-width="2"/></svg>') repeat;
+            pointer-events: none;
         }
 
-        .presentation p {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
+        .presentation-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .presentation-text p {
+            font-size: 1.1rem;
             color: #C0C0C0;
-            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* Processus */
-        .process .steps {
+        .presentation-stats {
             display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FFD700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-label {
+            color: #C0C0C0;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .presentation-image {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .presentation-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .presentation-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* PROCESS SECTION */
+        .process {
+            background: #0a0a0a;
+        }
+
+        .process h2 {
+            margin-bottom: 3rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
         }
 
         .step {
-            flex: 1 1 200px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            padding: 2.5rem 1.5rem;
             border-radius: 10px;
             text-align: center;
-            border: 1px solid #333;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            border: 1px solid rgba(255,215,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .step:hover {
             transform: translateY(-10px);
             border-color: #FFD700;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(255,215,0,0.2);
         }
 
-        .step .number {
-            font-size: 3rem;
+        .step:hover::before {
+            opacity: 1;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(255,215,0,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
             color: #FFD700;
-            font-weight: bold;
-            margin-bottom: 1rem;
+            border: 2px solid #FFD700;
+            transition: all 0.3s;
         }
 
-        /* CTA */
+        .step:hover .step-icon {
+            background: #FFD700;
+            color: #0a0a0a;
+            transform: rotate(360deg);
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .step p {
+            color: #C0C0C0;
+        }
+
+        /* CTA SECTION */
         .cta {
-            text-align: center;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
             border-top: 2px solid #FFD700;
             border-bottom: 2px solid #FFD700;
+            text-align: center;
         }
 
         .cta h2 {
+            color: #FFD700;
             margin-bottom: 2rem;
         }
 
-        /* Footer */
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* FOOTER */
         footer {
             background: #050505;
-            padding: 2rem 5%;
-            text-align: center;
+            padding: 3rem 5% 1.5rem;
             border-top: 1px solid #333;
         }
 
-        footer p {
-            color: #C0C0C0;
-            margin: 0.5rem 0;
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
 
-        footer a {
+        .footer-logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 10px gold);
+        }
+
+        .footer-links a {
+            color: #C0C0C0;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #FFD700;
+        }
+
+        .social-icons a {
+            color: #C0C0C0;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            transition: color 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            color: #FFD700;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #222;
+            padding-top: 1.5rem;
+        }
+
+        .copyright a {
             color: #FFD700;
             text-decoration: none;
-            transition: text-shadow 0.3s;
         }
 
-        footer a:hover {
-            text-shadow: 0 0 8px gold;
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .presentation-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .presentation-image {
+                order: -1;
+            }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
                 flex-direction: column;
                 width: 100%;
-                background: rgba(10, 10, 10, 0.98);
+                background: rgba(10,10,10,0.98);
                 position: absolute;
                 top: 70px;
                 left: 0;
@@ -284,17 +511,21 @@
             .nav-links.active {
                 display: flex;
             }
-            .nav-links li {
-                margin: 1rem 0;
-            }
             .burger {
                 display: flex;
             }
-            .hero-content h1 {
+            .hero h1 {
                 font-size: 2.5rem;
             }
-            .process .steps {
+            .hero p {
+                font-size: 1rem;
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            .footer-content {
                 flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -302,7 +533,7 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC">
         </div>
         <ul class="nav-links">
             <li><a href="index.html">Accueil</a></li>
@@ -318,79 +549,108 @@
         </div>
     </nav>
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Founder Impact Awards RDC</h1>
-                <p>Honorer les bâtisseurs de l'écosystème entrepreneurial congolais</p>
-                <div>
-                    <a href="register.html" class="btn btn-primary">S'inscrire</a>
-                    <a href="vote.html" class="btn btn-secondary">Voter</a>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Founder Impact Awards RDC</h1>
+            <p>Célébrons l'excellence entrepreneuriale et l'innovation en République Démocratique du Congo</p>
+            <div class="hero-buttons">
+                <a href="register.html" class="btn btn-primary">S'inscrire</a>
+                <a href="vote.html" class="btn btn-secondary">Voter</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="presentation">
+        <div class="container presentation-content">
+            <div class="presentation-text">
+                <h2>À propos des Awards</h2>
+                <p>Les <strong>Founder Impact Awards RDC</strong> sont bien plus qu'une simple compétition. Ils représentent une plateforme de reconnaissance pour les entrepreneurs, fondateurs, innovateurs et bâtisseurs qui transforment le paysage économique congolais. Organisés annuellement à Kinshasa, ces prix mettent en lumière les talents locaux et leur impact sur la communauté.</p>
+                <p>Notre mission : encourager l'entrepreneuriat, stimuler l'innovation et créer un réseau solide de leaders qui contribuent au développement durable de la RDC. Avec 25 catégories couvrant tous les secteurs d'activité, nous offrons une visibilité exceptionnelle aux acteurs du changement.</p>
+                <div class="presentation-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Catégories</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Candidats</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5000+</div>
+                        <div class="stat-label">Votes</div>
+                    </div>
                 </div>
             </div>
-        </section>
+            <div class="presentation-image">
+                <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Entrepreneurs">
+            </div>
+        </div>
+    </section>
 
-        <section class="presentation">
-            <h2>Présentation</h2>
-            <p>Les Founder Impact Awards RDC sont une compétition annuelle qui récompense les entrepreneurs, fondateurs, innovateurs et bâtisseurs qui contribuent de manière significative au développement de l'écosystème entrepreneurial en République Démocratique du Congo. Une célébration de l'excellence, de l'innovation et de l'impact.</p>
-        </section>
-
-        <section class="process">
+    <section class="process">
+        <div class="container">
             <h2>Processus de la compétition</h2>
             <div class="steps">
                 <div class="step">
-                    <div class="number">1</div>
+                    <div class="step-icon"><i class="fas fa-user-plus"></i></div>
                     <h3>Inscription</h3>
-                    <p>Les candidats soumettent leur dossier en ligne.</p>
+                    <p>Les entrepreneurs soumettent leur dossier avec présentation de leur entreprise et motivations.</p>
                 </div>
                 <div class="step">
-                    <div class="number">2</div>
-                    <h3>Sélection</h3>
-                    <p>Un jury d'experts évalue les candidatures.</p>
+                    <div class="step-icon"><i class="fas fa-users"></i></div>
+                    <h3>Sélection par le jury</h3>
+                    <p>Un panel d'experts évalue les candidatures sur des critères d'innovation, d'impact et de leadership.</p>
                 </div>
                 <div class="step">
-                    <div class="number">3</div>
+                    <div class="step-icon"><i class="fas fa-vote-yea"></i></div>
                     <h3>Vote du public</h3>
-                    <p>Le public vote pour ses candidats préférés.</p>
+                    <p>Le public vote en ligne pour ses candidats préférés dans chaque catégorie (un vote par personne et par candidat).</p>
                 </div>
                 <div class="step">
-                    <div class="number">4</div>
-                    <h3>Cérémonie</h3>
-                    <p>Remise des prix lors d'une soirée de gala.</p>
+                    <div class="step-icon"><i class="fas fa-trophy"></i></div>
+                    <h3>Cérémonie de remise</h3>
+                    <p>Soirée de gala à Kinshasa avec remise des trophées, certificats et distinctions.</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="cta">
-            <h2>Prêt à participer ou à voter ?</h2>
-            <div>
+    <section class="cta">
+        <div class="container">
+            <h2>Prêt à participer ou à soutenir votre candidat préféré ?</h2>
+            <div class="cta-buttons">
                 <a href="register.html" class="btn btn-primary">Inscription</a>
                 <a href="vote.html" class="btn btn-secondary">Vote public</a>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <footer>
-        <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés.</p>
-        <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Logo" height="50">
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Accueil</a>
+                <a href="categories.html">Catégories</a>
+                <a href="register.html">Inscription</a>
+                <a href="vote.html">Vote</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés. | Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+        </div>
     </footer>
 
     <script>
-        // Menu burger
-        const burger = document.querySelector('.burger');
-        const navLinks = document.querySelector('.nav-links');
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Fermer le menu après clic sur un lien (mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Firebase configuration
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
             authDomain: "monsiteweb-beaee.firebaseapp.com",
@@ -401,13 +661,29 @@
             appId: "1:847850292961:web:a12f2e12384863bac119a0",
             measurementId: "G-WVQ4PKQLQP"
         };
-
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const storage = firebase.storage();
 
-        // Vous pouvez ajouter ici des statistiques en direct si nécessaire
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Animation au scroll (optionnelle)
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+            } else {
+                navbar.style.background = 'rgba(10, 10, 10, 0.85)';
+            }
+        });
     </script>
 </body>
 </html>

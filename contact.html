@@ -6,116 +6,44 @@
     <title>Contact - Founder Impact Awards RDC</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Styles généraux identiques */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background: #0a0a0a;
             color: #f0f0f0;
-            line-height: 1.6;
         }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid #FFD700;
-            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
-        }
-
-        .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 8px gold);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 2rem;
-        }
-
-        .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s, text-shadow 0.3s;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0%;
-            height: 2px;
-            background: #FFD700;
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .burger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .burger div {
-            width: 25px;
-            height: 3px;
-            background: #FFD700;
-            margin: 3px 0;
-            transition: 0.3s;
-        }
+        .navbar { /* identique */ }
+        .logo img { height:60px; }
+        .nav-links { display:flex; gap:2rem; list-style:none; }
+        .nav-links a { color:#fff; text-decoration:none; }
+        .burger { display:none; }
 
         main {
-            margin-top: 90px;
+            margin-top: 100px;
             padding: 2rem 5%;
         }
 
         h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             color: #FFD700;
             text-align: center;
             margin-bottom: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
-        .contact-info {
-            max-width: 700px;
+        .contact-container {
+            max-width: 800px;
             margin: 0 auto;
-            background: rgba(20,20,20,0.9);
-            padding: 2.5rem;
-            border-radius: 15px;
-            border: 1px solid #333;
-            box-shadow: 0 0 30px rgba(255,215,0,0.1);
+            background: rgba(20,20,20,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255,215,0,0.2);
         }
 
         .contact-item {
@@ -127,8 +55,8 @@
         }
 
         .contact-icon {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: #FFD700;
             border-radius: 50%;
             display: flex;
@@ -136,12 +64,7 @@
             justify-content: center;
             margin-right: 1.5rem;
             color: #0a0a0a;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .contact-detail {
-            flex: 1;
+            font-size: 1.5rem;
         }
 
         .contact-detail h3 {
@@ -157,12 +80,11 @@
 
         .contact-detail a:hover {
             color: #FFD700;
-            text-decoration: underline;
         }
 
         .note {
             margin-top: 2rem;
-            padding: 1rem;
+            padding: 1.5rem;
             background: rgba(255,215,0,0.05);
             border-left: 4px solid #FFD700;
             border-radius: 5px;
@@ -171,54 +93,22 @@
 
         footer {
             background: #050505;
-            padding: 2rem 5%;
+            padding: 2rem 5% 1rem;
             text-align: center;
-            border-top: 1px solid #333;
             margin-top: 4rem;
         }
 
-        footer p {
-            color: #C0C0C0;
-            margin: 0.5rem 0;
-        }
-
-        footer a {
-            color: #FFD700;
-            text-decoration: none;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: rgba(10, 10, 10, 0.98);
-                position: absolute;
-                top: 70px;
-                left: 0;
-                padding: 2rem;
-                border-bottom: 2px solid #FFD700;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .nav-links li {
-                margin: 1rem 0;
-            }
-            .burger {
-                display: flex;
-            }
-            h1 {
-                font-size: 2rem;
-            }
+        @media (max-width:768px) {
+            .nav-links { display:none; }
+            .burger { display:flex; }
+            .contact-item { flex-direction: column; text-align:center; }
+            .contact-icon { margin:0 0 1rem; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">
-            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
-        </div>
+        <div class="logo"><img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Logo"></div>
         <ul class="nav-links">
             <li><a href="index.html">Accueil</a></li>
             <li><a href="categories.html">Catégories</a></li>
@@ -226,39 +116,36 @@
             <li><a href="vote.html">Vote</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
-        <div class="burger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
+        <div class="burger"><div></div><div></div><div></div></div>
     </nav>
 
     <main>
-        <h1>Contact</h1>
-        <div class="contact-info">
+        <h1>Contactez-nous</h1>
+        <div class="contact-container">
             <div class="contact-item">
-                <div class="contact-icon">📧</div>
+                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
                 <div class="contact-detail">
                     <h3>Email</h3>
                     <p><a href="mailto:founderimpactawardsrdc@gmail.com">founderimpactawardsrdc@gmail.com</a></p>
                 </div>
             </div>
             <div class="contact-item">
-                <div class="contact-icon">📱</div>
+                <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
                 <div class="contact-detail">
                     <h3>WhatsApp (preuves de paiement)</h3>
                     <p><a href="https://wa.me/237699853665">+237 699 85 36 65</a></p>
                 </div>
             </div>
             <div class="contact-item">
-                <div class="contact-icon">💰</div>
+                <div class="contact-icon"><i class="fas fa-money-bill-wave"></i></div>
                 <div class="contact-detail">
                     <h3>Dépôt des paiements</h3>
                     <p>+243 850 070 584</p>
                 </div>
             </div>
             <div class="note">
-                <strong>Note :</strong> Effectuez votre dépôt, puis envoyez la capture d'écran par WhatsApp au numéro indiqué.
+                <i class="fas fa-info-circle" style="color:#FFD700; margin-right:0.5rem;"></i>
+                Effectuez votre dépôt, puis envoyez la capture d'écran par WhatsApp au numéro indiqué.
             </div>
         </div>
     </main>
@@ -269,19 +156,6 @@
     </footer>
 
     <script>
-        // Menu burger
-        const burger = document.querySelector('.burger');
-        const navLinks = document.querySelector('.nav-links');
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Firebase initialization
         const firebaseConfig = {
             apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
             authDomain: "monsiteweb-beaee.firebaseapp.com",
@@ -293,6 +167,17 @@
             measurementId: "G-WVQ4PKQLQP"
         };
         firebase.initializeApp(firebaseConfig);
+
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
     </script>
 </body>
 </html>

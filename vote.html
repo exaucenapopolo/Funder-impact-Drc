@@ -6,119 +6,111 @@
     <title>Vote du public - Founder Impact Awards RDC</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Styles généraux */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Mêmes styles de base que précédemment */
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background: #0a0a0a;
             color: #f0f0f0;
-            line-height: 1.6;
         }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid #FFD700;
-            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
-        }
-
-        .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 8px gold);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 2rem;
-        }
-
-        .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s, text-shadow 0.3s;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: #FFD700;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0%;
-            height: 2px;
-            background: #FFD700;
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .burger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .burger div {
-            width: 25px;
-            height: 3px;
-            background: #FFD700;
-            margin: 3px 0;
-            transition: 0.3s;
-        }
+        .navbar { /* identique */ }
+        .logo img { height:60px; }
+        .nav-links { display:flex; gap:2rem; list-style:none; }
+        .nav-links a { color:#fff; text-decoration:none; }
+        .burger { display:none; }
 
         main {
-            margin-top: 90px;
+            margin-top: 100px;
             padding: 2rem 5%;
         }
 
         h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             color: #FFD700;
             text-align: center;
             margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
         .subtitle {
             text-align: center;
             color: #C0C0C0;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
+        /* Authentification */
+        .auth-section {
+            max-width: 400px;
+            margin: 0 auto 3rem;
+            background: rgba(20,20,20,0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+
+        .auth-section h2 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        .auth-section input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .auth-section button {
+            background: #FFD700;
+            color: #0a0a0a;
+            border: none;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .auth-section button:hover {
+            background: transparent;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,215,0,0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Grille des candidats */
         .candidates-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
         }
 
         .candidate-card {
@@ -126,9 +118,7 @@
             border-radius: 15px;
             overflow: hidden;
             border: 1px solid #333;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            text-align: center;
-            padding-bottom: 1.5rem;
+            transition: all 0.3s;
         }
 
         .candidate-card:hover {
@@ -145,13 +135,14 @@
         }
 
         .candidate-info {
-            padding: 1rem;
+            padding: 1.5rem;
+            text-align: center;
         }
 
         .candidate-name {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #FFD700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .candidate-company {
@@ -173,12 +164,12 @@
             color: #0a0a0a;
             border: none;
             padding: 0.8rem 2rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 0.5rem;
+            width: 100%;
         }
 
         .vote-btn:hover:not(:disabled) {
@@ -195,54 +186,20 @@
 
         footer {
             background: #050505;
-            padding: 2rem 5%;
+            padding: 2rem 5% 1rem;
             text-align: center;
-            border-top: 1px solid #333;
             margin-top: 4rem;
         }
 
-        footer p {
-            color: #C0C0C0;
-            margin: 0.5rem 0;
-        }
-
-        footer a {
-            color: #FFD700;
-            text-decoration: none;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: rgba(10, 10, 10, 0.98);
-                position: absolute;
-                top: 70px;
-                left: 0;
-                padding: 2rem;
-                border-bottom: 2px solid #FFD700;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .nav-links li {
-                margin: 1rem 0;
-            }
-            .burger {
-                display: flex;
-            }
-            h1 {
-                font-size: 2rem;
-            }
+        @media (max-width:768px) {
+            .nav-links { display:none; }
+            .burger { display:flex; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">
-            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
-        </div>
+        <div class="logo"><img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Logo"></div>
         <ul class="nav-links">
             <li><a href="index.html">Accueil</a></li>
             <li><a href="categories.html">Catégories</a></li>
@@ -250,19 +207,30 @@
             <li><a href="vote.html">Vote</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
-        <div class="burger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
+        <div class="burger"><div></div><div></div><div></div></div>
     </nav>
 
     <main>
         <h1>Vote du public</h1>
-        <p class="subtitle">Soutenez votre candidat préféré en votant pour lui. Vous ne pouvez voter qu'une seule fois par candidat.</p>
-        <div id="candidatesList" class="candidates-grid">
+        <p class="subtitle">Soutenez votre candidat préféré en votant pour lui. Connectez-vous pour voter (un seul vote par candidat).</p>
+
+        <!-- Section authentification -->
+        <div id="authContainer" class="auth-section">
+            <h2>Connexion</h2>
+            <input type="email" id="email" placeholder="Email" required>
+            <button id="loginBtn">Se connecter / Créer un compte</button>
+            <p style="color:#C0C0C0; margin-top:1rem;">Nous vous enverrons un email de connexion sécurisé.</p>
+        </div>
+
+        <!-- Info utilisateur connecté -->
+        <div id="userInfo" class="user-info" style="display:none;">
+            <span>Connecté en tant que : <span id="userEmail"></span></span>
+            <button id="logoutBtn" class="logout-btn">Déconnexion</button>
+        </div>
+
+        <!-- Grille des candidats -->
+        <div id="candidatesList" class="candidates-grid" style="display:none;">
             <!-- Les candidats seront chargés ici -->
-            <p style="text-align: center; grid-column: 1/-1;">Chargement des candidats...</p>
         </div>
     </main>
 
@@ -272,19 +240,6 @@
     </footer>
 
     <script>
-        // Menu burger
-        const burger = document.querySelector('.burger');
-        const navLinks = document.querySelector('.nav-links');
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Firebase initialization
         const firebaseConfig = {
             apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
             authDomain: "monsiteweb-beaee.firebaseapp.com",
@@ -296,78 +251,132 @@
             measurementId: "G-WVQ4PKQLQP"
         };
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const database = firebase.database();
 
-        // Récupérer les votes déjà effectués depuis localStorage (pour ce navigateur)
-        let votes = JSON.parse(localStorage.getItem('votes')) || {};
+        // Éléments DOM
+        const authContainer = document.getElementById('authContainer');
+        const userInfoDiv = document.getElementById('userInfo');
+        const userEmailSpan = document.getElementById('userEmail');
+        const candidatesList = document.getElementById('candidatesList');
+        const emailInput = document.getElementById('email');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-        // Fonction pour charger les candidats
-        function loadCandidates() {
-            const candidatesRef = database.ref('candidates');
-            candidatesRef.on('value', (snapshot) => {
-                const candidates = snapshot.val();
-                const container = document.getElementById('candidatesList');
-                if (!candidates) {
-                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Aucun candidat inscrit pour le moment.</p>';
-                    return;
-                }
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
 
-                let html = '';
-                Object.keys(candidates).forEach(key => {
-                    const c = candidates[key];
-                    html += `
-                        <div class="candidate-card" data-id="${key}">
-                            <img src="${c.photoURL || 'https://via.placeholder.com/300x200/333/fff?text=Photo'}" alt="${c.prenom} ${c.nom}" class="candidate-photo">
-                            <div class="candidate-info">
-                                <div class="candidate-name">${c.prenom} ${c.nom}</div>
-                                <div class="candidate-company">${c.entreprise}</div>
-                                <div class="candidate-category">${c.categorie}</div>
-                                <button class="vote-btn" data-id="${key}" ${votes[key] ? 'disabled' : ''}>
-                                    ${votes[key] ? 'Déjà voté' : 'Voter'}
-                                </button>
-                            </div>
+        // Gestion de l'authentification
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Utilisateur connecté
+                authContainer.style.display = 'none';
+                userInfoDiv.style.display = 'flex';
+                userEmailSpan.textContent = user.email;
+                loadCandidates(user.uid);
+            } else {
+                // Non connecté
+                authContainer.style.display = 'block';
+                userInfoDiv.style.display = 'none';
+                candidatesList.style.display = 'none';
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            const email = emailInput.value;
+            if (!email) {
+                alert('Veuillez entrer votre email.');
+                return;
+            }
+            // Envoyer un lien de connexion par email
+            auth.sendSignInLinkToEmail(email, {
+                url: window.location.href,
+                handleCodeInApp: true
+            }).then(() => {
+                window.localStorage.setItem('emailForSignIn', email);
+                alert('Un lien de connexion vous a été envoyé par email. Vérifiez votre boîte de réception.');
+            }).catch(error => {
+                console.error(error);
+                alert('Erreur : ' + error.message);
+            });
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // Charger les candidats et vérifier les votes de l'utilisateur
+        async function loadCandidates(uid) {
+            candidatesList.style.display = 'grid';
+            candidatesList.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Chargement des candidats...</p>';
+
+            // Récupérer tous les candidats
+            const snapshot = await database.ref('candidates').once('value');
+            const candidates = snapshot.val();
+            if (!candidates) {
+                candidatesList.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Aucun candidat pour le moment.</p>';
+                return;
+            }
+
+            // Récupérer les votes déjà effectués par cet utilisateur
+            const votesSnapshot = await database.ref('votes').orderByChild('voterId').equalTo(uid).once('value');
+            const userVotes = votesSnapshot.val() || {};
+            const votedCandidateIds = new Set();
+            Object.values(userVotes).forEach(vote => {
+                votedCandidateIds.add(vote.candidateId);
+            });
+
+            // Construire le HTML
+            let html = '';
+            for (const [id, c] of Object.entries(candidates)) {
+                const hasVoted = votedCandidateIds.has(id);
+                html += `
+                    <div class="candidate-card" data-id="${id}">
+                        <img src="${c.photoURL || 'https://via.placeholder.com/300x200/333/fff?text=Photo'}" alt="${c.prenom}" class="candidate-photo">
+                        <div class="candidate-info">
+                            <div class="candidate-name">${c.prenom} ${c.nom}</div>
+                            <div class="candidate-company">${c.entreprise}</div>
+                            <div class="candidate-category">${c.categorie}</div>
+                            <button class="vote-btn" data-id="${id}" ${hasVoted ? 'disabled' : ''}>
+                                ${hasVoted ? 'Déjà voté' : 'Voter'}
+                            </button>
                         </div>
-                    `;
-                });
-                container.innerHTML = html;
+                    </div>
+                `;
+            }
+            candidatesList.innerHTML = html;
 
-                // Ajouter les événements aux boutons
-                document.querySelectorAll('.vote-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const candidateId = e.target.dataset.id;
-                        if (votes[candidateId]) return;
+            // Ajouter les événements de vote
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const candidateId = e.target.dataset.id;
+                    if (e.target.disabled) return;
 
-                        // Enregistrer le vote dans Firebase
-                        try {
-                            // Incrémenter le compteur de votes du candidat (optionnel)
-                            const candidateRef = database.ref(`candidates/${candidateId}/votes`);
-                            await candidateRef.transaction((currentVotes) => {
-                                return (currentVotes || 0) + 1;
-                            });
+                    try {
+                        // Enregistrer le vote
+                        await database.ref('votes').push({
+                            candidateId: candidateId,
+                            voterId: uid,
+                            timestamp: new Date().toISOString()
+                        });
 
-                            // Enregistrer le vote dans un nœud séparé (pour traçabilité)
-                            const voteRef = database.ref('votes').push();
-                            await voteRef.set({
-                                candidateId: candidateId,
-                                timestamp: new Date().toISOString(),
-                                voterId: 'anonymous' // on pourrait utiliser une IP ou un identifiant unique
-                            });
+                        // Incrémenter le compteur de votes du candidat (optionnel)
+                        const candidateRef = database.ref(`candidates/${candidateId}/votes`);
+                        await candidateRef.transaction(v => (v || 0) + 1);
 
-                            // Marquer comme voté dans localStorage
-                            votes[candidateId] = true;
-                            localStorage.setItem('votes', JSON.stringify(votes));
-                            e.target.disabled = true;
-                            e.target.textContent = 'Déjà voté';
-                        } catch (error) {
-                            console.error('Erreur lors du vote:', error);
-                            alert('Une erreur est survenue. Veuillez réessayer.');
-                        }
-                    });
+                        e.target.disabled = true;
+                        e.target.textContent = 'Déjà voté';
+                    } catch (error) {
+                        console.error(error);
+                        alert('Erreur lors du vote : ' + error.message);
+                    }
                 });
             });
         }
-
-        loadCandidates();
     </script>
 </body>
 </html>
