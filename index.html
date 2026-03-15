@@ -3,56 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Founder Impact Awards RDC</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Founder Impact Awards RDC - Accueil</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Barre de navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #FFD700;
+            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #FFD700;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Hero section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://via.placeholder.com/1920x1080/1a1a1a/808080?text=Founder+Impact+Awards') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            margin-top: 70px;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #C0C0C0;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            margin: 0 0.5rem;
+            border: 2px solid #FFD700;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .btn-primary {
+            background: #FFD700;
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #FFD700;
+        }
+
+        .btn-secondary:hover {
+            background: #FFD700;
+            color: #0a0a0a;
+            box-shadow: 0 0 20px #FFD700;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sections générales */
+        section {
+            padding: 5rem 10%;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: #FFD700;
+            margin: 1rem auto;
+        }
+
+        .presentation p {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #C0C0C0;
+            font-size: 1.2rem;
+        }
+
+        /* Processus */
+        .process .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .step {
+            flex: 1 1 200px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            border-color: #FFD700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .step .number {
+            font-size: 3rem;
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* CTA */
+        .cta {
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-top: 2px solid #FFD700;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        .cta h2 {
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #050505;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+
+        footer p {
+            color: #C0C0C0;
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+            transition: text-shadow 0.3s;
+        }
+
+        footer a:hover {
+            text-shadow: 0 0 8px gold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 2rem;
+                border-bottom: 2px solid #FFD700;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            .burger {
+                display: flex;
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            .process .steps {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">FIA RDC</div>
-            <ul class="nav-links">
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="categories.html">Catégories</a></li>
-                <li><a href="register.html">Inscription</a></li>
-                <li><a href="vote.html">Vote</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-            <div class="burger">
-                <div></div><div></div><div></div>
-            </div>
-        </nav>
-    </header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="categories.html">Catégories</a></li>
+            <li><a href="register.html">Inscription</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
 
     <main>
         <section class="hero">
             <div class="hero-content">
                 <h1>Founder Impact Awards RDC</h1>
-                <p>Célébrons les bâtisseurs de l’écosystème entrepreneurial congolais.</p>
-                <a href="register.html" class="btn">S'inscrire</a>
-                <a href="vote.html" class="btn btn-secondary">Voter</a>
+                <p>Honorer les bâtisseurs de l'écosystème entrepreneurial congolais</p>
+                <div>
+                    <a href="register.html" class="btn btn-primary">S'inscrire</a>
+                    <a href="vote.html" class="btn btn-secondary">Voter</a>
+                </div>
             </div>
         </section>
 
         <section class="presentation">
             <h2>Présentation</h2>
-            <p>Les Founder Impact Awards RDC récompensent les entrepreneurs, fondateurs, innovateurs et bâtisseurs qui contribuent au développement de l'écosystème entrepreneurial en République Démocratique du Congo.</p>
+            <p>Les Founder Impact Awards RDC sont une compétition annuelle qui récompense les entrepreneurs, fondateurs, innovateurs et bâtisseurs qui contribuent de manière significative au développement de l'écosystème entrepreneurial en République Démocratique du Congo. Une célébration de l'excellence, de l'innovation et de l'impact.</p>
         </section>
 
         <section class="process">
             <h2>Processus de la compétition</h2>
             <div class="steps">
-                <div class="step">1. Inscription des candidats</div>
-                <div class="step">2. Sélection par le jury</div>
-                <div class="step">3. Vote du public en ligne</div>
-                <div class="step">4. Cérémonie de remise des prix</div>
+                <div class="step">
+                    <div class="number">1</div>
+                    <h3>Inscription</h3>
+                    <p>Les candidats soumettent leur dossier en ligne.</p>
+                </div>
+                <div class="step">
+                    <div class="number">2</div>
+                    <h3>Sélection</h3>
+                    <p>Un jury d'experts évalue les candidatures.</p>
+                </div>
+                <div class="step">
+                    <div class="number">3</div>
+                    <h3>Vote du public</h3>
+                    <p>Le public vote pour ses candidats préférés.</p>
+                </div>
+                <div class="step">
+                    <div class="number">4</div>
+                    <h3>Cérémonie</h3>
+                    <p>Remise des prix lors d'une soirée de gala.</p>
+                </div>
             </div>
         </section>
 
         <section class="cta">
             <h2>Prêt à participer ou à voter ?</h2>
-            <div class="cta-buttons">
-                <a href="register.html" class="btn">Inscription</a>
+            <div>
+                <a href="register.html" class="btn btn-primary">Inscription</a>
                 <a href="vote.html" class="btn btn-secondary">Vote public</a>
             </div>
         </section>
@@ -63,6 +375,39 @@
         <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Fermer le menu après clic sur un lien (mobile)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
+            authDomain: "monsiteweb-beaee.firebaseapp.com",
+            databaseURL: "https://monsiteweb-beaee-default-rtdb.firebaseio.com",
+            projectId: "monsiteweb-beaee",
+            storageBucket: "monsiteweb-beaee.firebasestorage.app",
+            messagingSenderId: "847850292961",
+            appId: "1:847850292961:web:a12f2e12384863bac119a0",
+            measurementId: "G-WVQ4PKQLQP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const storage = firebase.storage();
+
+        // Vous pouvez ajouter ici des statistiques en direct si nécessaire
+    </script>
 </body>
 </html>

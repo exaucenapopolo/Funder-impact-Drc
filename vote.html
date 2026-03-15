@@ -4,22 +4,370 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote du public - Founder Impact Awards RDC</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <style>
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #FFD700;
+            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #FFD700;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        main {
+            margin-top: 90px;
+            padding: 2rem 5%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #C0C0C0;
+            margin-bottom: 3rem;
+        }
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .candidate-card {
+            background: rgba(20,20,20,0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            text-align: center;
+            padding-bottom: 1.5rem;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-10px);
+            border-color: #FFD700;
+            box-shadow: 0 10px 30px rgba(255,215,0,0.2);
+        }
+
+        .candidate-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        .candidate-info {
+            padding: 1rem;
+        }
+
+        .candidate-name {
+            font-size: 1.4rem;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+
+        .candidate-company {
+            color: #C0C0C0;
+            font-weight: 500;
+        }
+
+        .candidate-category {
+            background: rgba(255,215,0,0.1);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .vote-btn {
+            background: #FFD700;
+            color: #0a0a0a;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .vote-btn:hover:not(:disabled) {
+            background: transparent;
+            color: #FFD700;
+            box-shadow: 0 0 15px #FFD700;
+        }
+
+        .vote-btn:disabled {
+            background: #555;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        footer {
+            background: #050505;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: #C0C0C0;
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 2rem;
+                border-bottom: 2px solid #FFD700;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            .burger {
+                display: flex;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>...</header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="categories.html">Catégories</a></li>
+            <li><a href="register.html">Inscription</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
 
     <main>
-        <section class="voting">
-            <h1>Votez pour votre candidat préféré</h1>
-            <p>Vous pouvez voter une seule fois par candidat.</p>
-            <div id="candidatesList" class="candidates-grid">
-                <!-- Les candidats seront chargés dynamiquement via JS -->
-            </div>
-        </section>
+        <h1>Vote du public</h1>
+        <p class="subtitle">Soutenez votre candidat préféré en votant pour lui. Vous ne pouvez voter qu'une seule fois par candidat.</p>
+        <div id="candidatesList" class="candidates-grid">
+            <!-- Les candidats seront chargés ici -->
+            <p style="text-align: center; grid-column: 1/-1;">Chargement des candidats...</p>
+        </div>
     </main>
 
-    <footer>...</footer>
-    <script src="js/main.js"></script>
+    <footer>
+        <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés.</p>
+        <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+    </footer>
+
+    <script>
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
+            authDomain: "monsiteweb-beaee.firebaseapp.com",
+            databaseURL: "https://monsiteweb-beaee-default-rtdb.firebaseio.com",
+            projectId: "monsiteweb-beaee",
+            storageBucket: "monsiteweb-beaee.firebasestorage.app",
+            messagingSenderId: "847850292961",
+            appId: "1:847850292961:web:a12f2e12384863bac119a0",
+            measurementId: "G-WVQ4PKQLQP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Récupérer les votes déjà effectués depuis localStorage (pour ce navigateur)
+        let votes = JSON.parse(localStorage.getItem('votes')) || {};
+
+        // Fonction pour charger les candidats
+        function loadCandidates() {
+            const candidatesRef = database.ref('candidates');
+            candidatesRef.on('value', (snapshot) => {
+                const candidates = snapshot.val();
+                const container = document.getElementById('candidatesList');
+                if (!candidates) {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Aucun candidat inscrit pour le moment.</p>';
+                    return;
+                }
+
+                let html = '';
+                Object.keys(candidates).forEach(key => {
+                    const c = candidates[key];
+                    html += `
+                        <div class="candidate-card" data-id="${key}">
+                            <img src="${c.photoURL || 'https://via.placeholder.com/300x200/333/fff?text=Photo'}" alt="${c.prenom} ${c.nom}" class="candidate-photo">
+                            <div class="candidate-info">
+                                <div class="candidate-name">${c.prenom} ${c.nom}</div>
+                                <div class="candidate-company">${c.entreprise}</div>
+                                <div class="candidate-category">${c.categorie}</div>
+                                <button class="vote-btn" data-id="${key}" ${votes[key] ? 'disabled' : ''}>
+                                    ${votes[key] ? 'Déjà voté' : 'Voter'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                // Ajouter les événements aux boutons
+                document.querySelectorAll('.vote-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const candidateId = e.target.dataset.id;
+                        if (votes[candidateId]) return;
+
+                        // Enregistrer le vote dans Firebase
+                        try {
+                            // Incrémenter le compteur de votes du candidat (optionnel)
+                            const candidateRef = database.ref(`candidates/${candidateId}/votes`);
+                            await candidateRef.transaction((currentVotes) => {
+                                return (currentVotes || 0) + 1;
+                            });
+
+                            // Enregistrer le vote dans un nœud séparé (pour traçabilité)
+                            const voteRef = database.ref('votes').push();
+                            await voteRef.set({
+                                candidateId: candidateId,
+                                timestamp: new Date().toISOString(),
+                                voterId: 'anonymous' // on pourrait utiliser une IP ou un identifiant unique
+                            });
+
+                            // Marquer comme voté dans localStorage
+                            votes[candidateId] = true;
+                            localStorage.setItem('votes', JSON.stringify(votes));
+                            e.target.disabled = true;
+                            e.target.textContent = 'Déjà voté';
+                        } catch (error) {
+                            console.error('Erreur lors du vote:', error);
+                            alert('Une erreur est survenue. Veuillez réessayer.');
+                        }
+                    });
+                });
+            });
+        }
+
+        loadCandidates();
+    </script>
 </body>
 </html>

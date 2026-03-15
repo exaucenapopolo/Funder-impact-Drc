@@ -4,53 +4,279 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catégories - Founder Impact Awards RDC</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <style>
+        /* Même style que index.html, avec quelques ajustements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #FFD700;
+            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #FFD700;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        main {
+            margin-top: 90px;
+            padding: 2rem 5%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #C0C0C0;
+            margin: 3rem 0 1.5rem;
+            border-left: 5px solid #FFD700;
+            padding-left: 1rem;
+        }
+
+        .categories-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-item {
+            background: rgba(255,255,255,0.03);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            color: #f0f0f0;
+        }
+
+        .category-item:hover {
+            border-color: #FFD700;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.1);
+        }
+
+        .special {
+            background: rgba(255,215,0,0.05);
+            border-color: #B8860B;
+        }
+
+        footer {
+            background: #050505;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: #C0C0C0;
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 2rem;
+                border-bottom: 2px solid #FFD700;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            .burger {
+                display: flex;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>... (même navbar que index.html) ...</header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="categories.html">Catégories</a></li>
+            <li><a href="register.html">Inscription</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
 
     <main>
-        <section class="categories">
-            <h1>Catégories des récompenses</h1>
-            
-            <h2>AWARDS – CATÉGORIES DES FONDATEURS</h2>
-            <ul>
-                <li>Fondateur de l’Année</li>
-                <li>Jeune Fondateur de l’Année</li>
-                <li>Femme Fondatrice de l’Année</li>
-                <li>Startup Innovante de l’Année</li>
-                <li>Entreprise à Impact Social</li>
-                <li>Fondateur dans le Commerce & Import-Export</li>
-                <li>Fondateur dans la Distribution</li>
-                <li>Fondateur dans l’E-commerce</li>
-                <li>Fondateur d’Agence de Communication</li>
-                <li>Fondateur de Média en Ligne</li>
-                <li>Fondateur d’Agence de Marketing Digital</li>
-                <li>Créateur de Plateforme Digitale</li>
-                <li>Fondateur dans la Mode</li>
-                <li>Fondateur de Maison de Production</li>
-                <li>Fondateur d’Entreprise Culturelle</li>
-                <li>Fondateur d’Entreprise Immobilière</li>
-                <li>Fondateur dans le BTP</li>
-                <li>Fondateur de Restaurant</li>
-                <li>Fondateur d’Hôtel</li>
-                <li>Fondateur Agence Event & Wedding Planning</li>
-                <li>Fondateur de Startup Tech</li>
-                <li>Innovation Technologique de l’Année</li>
-            </ul>
+        <h1>Catégories de récompenses</h1>
 
-            <h2>PRIX SPÉCIAUX</h2>
-            <ul>
-                <li>Prix Leadership Inspirant</li>
-                <li>Prix Impact Communautaire</li>
-                <li>Prix Carrière Exemplaire</li>
-                <li>Prix Révélation de l’Année</li>
-            </ul>
-        </section>
+        <h2>AWARDS – CATÉGORIES DES FONDATEURS</h2>
+        <div class="categories-list">
+            <div class="category-item">Fondateur de l'Année</div>
+            <div class="category-item">Jeune Fondateur de l'Année</div>
+            <div class="category-item">Femme Fondatrice de l'Année</div>
+            <div class="category-item">Startup Innovante de l'Année</div>
+            <div class="category-item">Entreprise à Impact Social</div>
+            <div class="category-item">Fondateur dans le Commerce & Import-Export</div>
+            <div class="category-item">Fondateur dans la Distribution</div>
+            <div class="category-item">Fondateur dans l'E-commerce</div>
+            <div class="category-item">Fondateur d'Agence de Communication</div>
+            <div class="category-item">Fondateur de Média en Ligne</div>
+            <div class="category-item">Fondateur d'Agence de Marketing Digital</div>
+            <div class="category-item">Créateur de Plateforme Digitale</div>
+            <div class="category-item">Fondateur dans la Mode</div>
+            <div class="category-item">Fondateur de Maison de Production</div>
+            <div class="category-item">Fondateur d'Entreprise Culturelle</div>
+            <div class="category-item">Fondateur d'Entreprise Immobilière</div>
+            <div class="category-item">Fondateur dans le BTP</div>
+            <div class="category-item">Fondateur de Restaurant</div>
+            <div class="category-item">Fondateur d'Hôtel</div>
+            <div class="category-item">Fondateur Agence Event & Wedding Planning</div>
+            <div class="category-item">Fondateur de Startup Tech</div>
+            <div class="category-item">Innovation Technologique de l'Année</div>
+        </div>
+
+        <h2>PRIX SPÉCIAUX</h2>
+        <div class="categories-list">
+            <div class="category-item special">Prix Leadership Inspirant</div>
+            <div class="category-item special">Prix Impact Communautaire</div>
+            <div class="category-item special">Prix Carrière Exemplaire</div>
+            <div class="category-item special">Prix Révélation de l'Année</div>
+        </div>
     </main>
 
-    <footer>... (même footer) ...</footer>
-    <script src="js/main.js"></script>
+    <footer>
+        <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés.</p>
+        <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+    </footer>
+
+    <script>
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
+            authDomain: "monsiteweb-beaee.firebaseapp.com",
+            databaseURL: "https://monsiteweb-beaee-default-rtdb.firebaseio.com",
+            projectId: "monsiteweb-beaee",
+            storageBucket: "monsiteweb-beaee.firebasestorage.app",
+            messagingSenderId: "847850292961",
+            appId: "1:847850292961:web:a12f2e12384863bac119a0",
+            measurementId: "G-WVQ4PKQLQP"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </body>
 </html>

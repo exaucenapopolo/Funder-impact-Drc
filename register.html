@@ -4,88 +4,558 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - Founder Impact Awards RDC</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <style>
+        /* Styles généraux identiques aux autres pages */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #FFD700;
+            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #FFD700;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        main {
+            margin-top: 90px;
+            padding: 2rem 5%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .registration-form {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(20,20,20,0.9);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 0 30px rgba(255,215,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1.5rem;
+        }
+
+        .form-section h3 {
+            color: #FFD700;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #C0C0C0;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        input[type="file"] {
+            padding: 0.5rem 0;
+            background: transparent;
+            border: none;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #FFD700;
+            color: #0a0a0a;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: #C0C0C0;
+        }
+
+        .btn-submit {
+            background: #FFD700;
+            color: #0a0a0a;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: transparent;
+            color: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+            border: 2px solid #FFD700;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            background: rgba(0,255,0,0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .error {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        footer {
+            background: #050505;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: #C0C0C0;
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 2rem;
+                border-bottom: 2px solid #FFD700;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            .burger {
+                display: flex;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>...</header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="categories.html">Catégories</a></li>
+            <li><a href="register.html">Inscription</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
 
     <main>
-        <section class="registration">
-            <h1>Inscription des participants</h1>
+        <h1>Inscription des participants</h1>
+        <div class="registration-form">
             <form id="registerForm">
-                <h3>Informations personnelles</h3>
-                <input type="text" name="nom" placeholder="Nom" required>
-                <input type="text" name="postnom" placeholder="Post-nom" required>
-                <input type="text" name="prenom" placeholder="Prénom" required>
-                <input type="number" name="age" placeholder="Âge" required>
-                <input type="text" name="pays" placeholder="Pays" required>
-                <input type="text" name="ville" placeholder="Ville" required>
+                <!-- Informations personnelles -->
+                <div class="form-section">
+                    <h3>Informations personnelles</h3>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Post-nom *</label>
+                        <input type="text" name="postnom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" name="prenom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Âge *</label>
+                        <input type="number" name="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pays *</label>
+                        <input type="text" name="pays" value="RDC" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ville *</label>
+                        <input type="text" name="ville" required>
+                    </div>
+                </div>
 
-                <h3>Contact</h3>
-                <input type="text" name="whatsapp" placeholder="Numéro WhatsApp" required>
-                <input type="email" name="email" placeholder="Email" required>
+                <!-- Contact -->
+                <div class="form-section">
+                    <h3>Contact</h3>
+                    <div class="form-group">
+                        <label>Numéro WhatsApp *</label>
+                        <input type="text" name="whatsapp" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required>
+                    </div>
+                </div>
 
-                <h3>Informations entreprise</h3>
-                <input type="text" name="entreprise" placeholder="Nom de l'entreprise" required>
-                <input type="text" name="secteur" placeholder="Secteur d'activité" required>
-                <input type="number" name="annee_creation" placeholder="Année de création" required>
-                <input type="number" name="employes" placeholder="Nombre d'employés" required>
+                <!-- Informations entreprise -->
+                <div class="form-section">
+                    <h3>Informations entreprise</h3>
+                    <div class="form-group">
+                        <label>Nom de l'entreprise *</label>
+                        <input type="text" name="entreprise" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Secteur d'activité *</label>
+                        <input type="text" name="secteur" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Année de création *</label>
+                        <input type="number" name="annee_creation" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre d'employés *</label>
+                        <input type="number" name="employes" required>
+                    </div>
+                </div>
 
-                <h3>Participation</h3>
-                <select name="categorie" required>
-                    <option value="">Choisissez une catégorie</option>
-                    <!-- Insérez ici toutes les catégories (liste de categories.html) -->
-                    <option>Fondateur de l’Année</option>
-                    <option>Jeune Fondateur de l’Année</option>
-                    <option>Femme Fondatrice de l’Année</option>
-                    <option>Startup Innovante de l’Année</option>
-                    <option>Entreprise à Impact Social</option>
-                    <option>Fondateur dans le Commerce & Import-Export</option>
-                    <option>Fondateur dans la Distribution</option>
-                    <option>Fondateur dans l’E-commerce</option>
-                    <option>Fondateur d’Agence de Communication</option>
-                    <option>Fondateur de Média en Ligne</option>
-                    <option>Fondateur d’Agence de Marketing Digital</option>
-                    <option>Créateur de Plateforme Digitale</option>
-                    <option>Fondateur dans la Mode</option>
-                    <option>Fondateur de Maison de Production</option>
-                    <option>Fondateur d’Entreprise Culturelle</option>
-                    <option>Fondateur d’Entreprise Immobilière</option>
-                    <option>Fondateur dans le BTP</option>
-                    <option>Fondateur de Restaurant</option>
-                    <option>Fondateur d’Hôtel</option>
-                    <option>Fondateur Agence Event & Wedding Planning</option>
-                    <option>Fondateur de Startup Tech</option>
-                    <option>Innovation Technologique de l’Année</option>
-                    <option>Prix Leadership Inspirant</option>
-                    <option>Prix Impact Communautaire</option>
-                    <option>Prix Carrière Exemplaire</option>
-                    <option>Prix Révélation de l’Année</option>
-                </select>
+                <!-- Participation -->
+                <div class="form-section">
+                    <h3>Participation</h3>
+                    <div class="form-group">
+                        <label>Catégorie choisie *</label>
+                        <select name="categorie" required>
+                            <option value="">Sélectionnez une catégorie</option>
+                            <!-- Catégories des fondateurs -->
+                            <optgroup label="AWARDS – CATÉGORIES DES FONDATEURS">
+                                <option>Fondateur de l'Année</option>
+                                <option>Jeune Fondateur de l'Année</option>
+                                <option>Femme Fondatrice de l'Année</option>
+                                <option>Startup Innovante de l'Année</option>
+                                <option>Entreprise à Impact Social</option>
+                                <option>Fondateur dans le Commerce & Import-Export</option>
+                                <option>Fondateur dans la Distribution</option>
+                                <option>Fondateur dans l'E-commerce</option>
+                                <option>Fondateur d'Agence de Communication</option>
+                                <option>Fondateur de Média en Ligne</option>
+                                <option>Fondateur d'Agence de Marketing Digital</option>
+                                <option>Créateur de Plateforme Digitale</option>
+                                <option>Fondateur dans la Mode</option>
+                                <option>Fondateur de Maison de Production</option>
+                                <option>Fondateur d'Entreprise Culturelle</option>
+                                <option>Fondateur d'Entreprise Immobilière</option>
+                                <option>Fondateur dans le BTP</option>
+                                <option>Fondateur de Restaurant</option>
+                                <option>Fondateur d'Hôtel</option>
+                                <option>Fondateur Agence Event & Wedding Planning</option>
+                                <option>Fondateur de Startup Tech</option>
+                                <option>Innovation Technologique de l'Année</option>
+                            </optgroup>
+                            <optgroup label="PRIX SPÉCIAUX">
+                                <option>Prix Leadership Inspirant</option>
+                                <option>Prix Impact Communautaire</option>
+                                <option>Prix Carrière Exemplaire</option>
+                                <option>Prix Révélation de l'Année</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
 
-                <h3>Présentation</h3>
-                <textarea name="description" placeholder="Description de l'entreprise" required></textarea>
-                <textarea name="motivation" placeholder="Pourquoi méritez-vous ce prix ?" required></textarea>
+                <!-- Présentation -->
+                <div class="form-section">
+                    <h3>Présentation</h3>
+                    <div class="form-group">
+                        <label>Description de l'entreprise *</label>
+                        <textarea name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Pourquoi méritez-vous ce prix ? *</label>
+                        <textarea name="motivation" rows="4" required></textarea>
+                    </div>
+                </div>
 
-                <h3>Médias</h3>
-                <label>Photo du fondateur :</label>
-                <input type="file" name="photo" accept="image/*" required>
-                <label>Logo de l'entreprise :</label>
-                <input type="file" name="logo" accept="image/*" required>
+                <!-- Médias -->
+                <div class="form-section">
+                    <h3>Médias</h3>
+                    <div class="form-group">
+                        <label>Photo du fondateur *</label>
+                        <input type="file" name="photo" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Logo de l'entreprise *</label>
+                        <input type="file" name="logo" accept="image/*" required>
+                    </div>
+                </div>
 
-                <h3>Réseaux sociaux (facultatif)</h3>
-                <input type="url" name="siteweb" placeholder="Site web">
-                <input type="url" name="facebook" placeholder="Facebook">
-                <input type="url" name="instagram" placeholder="Instagram">
-                <input type="url" name="linkedin" placeholder="LinkedIn">
+                <!-- Réseaux sociaux (facultatif) -->
+                <div class="form-section">
+                    <h3>Réseaux sociaux (facultatif)</h3>
+                    <div class="form-group">
+                        <label>Site web</label>
+                        <input type="url" name="siteweb">
+                    </div>
+                    <div class="form-group">
+                        <label>Facebook</label>
+                        <input type="url" name="facebook">
+                    </div>
+                    <div class="form-group">
+                        <label>Instagram</label>
+                        <input type="url" name="instagram">
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn</label>
+                        <input type="url" name="linkedin">
+                    </div>
+                </div>
 
-                <button type="submit">Soumettre ma candidature</button>
+                <button type="submit" class="btn-submit">Soumettre ma candidature</button>
             </form>
-            <div id="registerMessage"></div>
-        </section>
+            <div id="message" class="message"></div>
+        </div>
     </main>
 
-    <footer>...</footer>
-    <script src="js/main.js"></script>
+    <footer>
+        <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés.</p>
+        <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+    </footer>
+
+    <script>
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
+            authDomain: "monsiteweb-beaee.firebaseapp.com",
+            databaseURL: "https://monsiteweb-beaee-default-rtdb.firebaseio.com",
+            projectId: "monsiteweb-beaee",
+            storageBucket: "monsiteweb-beaee.firebasestorage.app",
+            messagingSenderId: "847850292961",
+            appId: "1:847850292961:web:a12f2e12384863bac119a0",
+            measurementId: "G-WVQ4PKQLQP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const storage = firebase.storage();
+
+        // Gestion du formulaire
+        const form = document.getElementById('registerForm');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messageDiv.textContent = 'Traitement en cours...';
+            messageDiv.className = 'message';
+
+            try {
+                // Récupération des fichiers
+                const photoFile = form.photo.files[0];
+                const logoFile = form.logo.files[0];
+
+                if (!photoFile || !logoFile) {
+                    throw new Error('Veuillez sélectionner une photo et un logo.');
+                }
+
+                // Upload des images vers Firebase Storage
+                const timestamp = Date.now();
+                const photoRef = storage.ref(`candidates/photos/${timestamp}_${photoFile.name}`);
+                const logoRef = storage.ref(`candidates/logos/${timestamp}_${logoFile.name}`);
+
+                const photoSnapshot = await photoRef.put(photoFile);
+                const logoSnapshot = await logoRef.put(logoFile);
+
+                const photoURL = await photoSnapshot.ref.getDownloadURL();
+                const logoURL = await logoSnapshot.ref.getDownloadURL();
+
+                // Construction de l'objet candidat
+                const formData = {
+                    nom: form.nom.value,
+                    postnom: form.postnom.value,
+                    prenom: form.prenom.value,
+                    age: form.age.value,
+                    pays: form.pays.value,
+                    ville: form.ville.value,
+                    whatsapp: form.whatsapp.value,
+                    email: form.email.value,
+                    entreprise: form.entreprise.value,
+                    secteur: form.secteur.value,
+                    annee_creation: form.annee_creation.value,
+                    employes: form.employes.value,
+                    categorie: form.categorie.value,
+                    description: form.description.value,
+                    motivation: form.motivation.value,
+                    photoURL: photoURL,
+                    logoURL: logoURL,
+                    siteweb: form.siteweb.value || '',
+                    facebook: form.facebook.value || '',
+                    instagram: form.instagram.value || '',
+                    linkedin: form.linkedin.value || '',
+                    dateInscription: new Date().toISOString(),
+                    votes: 0 // compteur de votes (optionnel)
+                };
+
+                // Sauvegarde dans Firebase Realtime Database
+                const newCandidateRef = database.ref('candidates').push();
+                await newCandidateRef.set(formData);
+
+                messageDiv.textContent = 'Félicitations ! Votre candidature a été enregistrée avec succès.';
+                messageDiv.className = 'message success';
+                form.reset();
+
+                // Redirection vers une page de confirmation après 2 secondes
+                setTimeout(() => {
+                    window.location.href = 'confirmation.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error(error);
+                messageDiv.textContent = 'Erreur : ' + error.message;
+                messageDiv.className = 'message error';
+            }
+        });
+    </script>
 </body>
 </html>

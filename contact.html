@@ -4,22 +4,295 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact - Founder Impact Awards RDC</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <style>
+        /* Styles généraux identiques */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #FFD700;
+            box-shadow: 0 2px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #FFD700;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        main {
+            margin-top: 90px;
+            padding: 2rem 5%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .contact-info {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(20,20,20,0.9);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 0 30px rgba(255,215,0,0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            color: #0a0a0a;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .contact-detail {
+            flex: 1;
+        }
+
+        .contact-detail h3 {
+            color: #FFD700;
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-detail p, .contact-detail a {
+            color: #C0C0C0;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .contact-detail a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+        }
+
+        .note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255,215,0,0.05);
+            border-left: 4px solid #FFD700;
+            border-radius: 5px;
+            color: #C0C0C0;
+        }
+
+        footer {
+            background: #050505;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: #C0C0C0;
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 2rem;
+                border-bottom: 2px solid #FFD700;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            .burger {
+                display: flex;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>...</header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/Funder-impact-Drc/refs/heads/main/IMG-20260314-WA0050.jpg" alt="Founder Impact Awards RDC Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="categories.html">Catégories</a></li>
+            <li><a href="register.html">Inscription</a></li>
+            <li><a href="vote.html">Vote</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
 
     <main>
-        <section class="contact">
-            <h1>Contact</h1>
-            <p><strong>Email :</strong> <a href="mailto:founderimpactawardsrdc@gmail.com">founderimpactawardsrdc@gmail.com</a></p>
-            <p><strong>WhatsApp (envoi des preuves de paiement) :</strong> <a href="https://wa.me/237699853665">+237 699 85 36 65</a></p>
-            <p><strong>Dépôt des paiements :</strong> +243 850 070 584</p>
-            <p><em>Effectuez votre dépôt, puis envoyez la capture par WhatsApp.</em></p>
-        </section>
+        <h1>Contact</h1>
+        <div class="contact-info">
+            <div class="contact-item">
+                <div class="contact-icon">📧</div>
+                <div class="contact-detail">
+                    <h3>Email</h3>
+                    <p><a href="mailto:founderimpactawardsrdc@gmail.com">founderimpactawardsrdc@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">📱</div>
+                <div class="contact-detail">
+                    <h3>WhatsApp (preuves de paiement)</h3>
+                    <p><a href="https://wa.me/237699853665">+237 699 85 36 65</a></p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">💰</div>
+                <div class="contact-detail">
+                    <h3>Dépôt des paiements</h3>
+                    <p>+243 850 070 584</p>
+                </div>
+            </div>
+            <div class="note">
+                <strong>Note :</strong> Effectuez votre dépôt, puis envoyez la capture d'écran par WhatsApp au numéro indiqué.
+            </div>
+        </div>
     </main>
 
-    <footer>...</footer>
-    <script src="js/main.js"></script>
+    <footer>
+        <p>&copy; 2025 Founder Impact Awards RDC. Tous droits réservés.</p>
+        <p>Site propulsé par <a href="https://socialboosthorizon.com" target="_blank">Social Boost Horizon</a></p>
+    </footer>
+
+    <script>
+        // Menu burger
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyDh8Py9swpazGO0_ZBA9x4AxbWLvLM3zdE",
+            authDomain: "monsiteweb-beaee.firebaseapp.com",
+            databaseURL: "https://monsiteweb-beaee-default-rtdb.firebaseio.com",
+            projectId: "monsiteweb-beaee",
+            storageBucket: "monsiteweb-beaee.firebasestorage.app",
+            messagingSenderId: "847850292961",
+            appId: "1:847850292961:web:a12f2e12384863bac119a0",
+            measurementId: "G-WVQ4PKQLQP"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </body>
 </html>
