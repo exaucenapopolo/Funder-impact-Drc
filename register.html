@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Founder Impact Awards RDC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>...</header>
+
+    <main>
+        <section class="registration">
+            <h1>Inscription des participants</h1>
+            <form id="registerForm">
+                <h3>Informations personnelles</h3>
+                <input type="text" name="nom" placeholder="Nom" required>
+                <input type="text" name="postnom" placeholder="Post-nom" required>
+                <input type="text" name="prenom" placeholder="Prénom" required>
+                <input type="number" name="age" placeholder="Âge" required>
+                <input type="text" name="pays" placeholder="Pays" required>
+                <input type="text" name="ville" placeholder="Ville" required>
+
+                <h3>Contact</h3>
+                <input type="text" name="whatsapp" placeholder="Numéro WhatsApp" required>
+                <input type="email" name="email" placeholder="Email" required>
+
+                <h3>Informations entreprise</h3>
+                <input type="text" name="entreprise" placeholder="Nom de l'entreprise" required>
+                <input type="text" name="secteur" placeholder="Secteur d'activité" required>
+                <input type="number" name="annee_creation" placeholder="Année de création" required>
+                <input type="number" name="employes" placeholder="Nombre d'employés" required>
+
+                <h3>Participation</h3>
+                <select name="categorie" required>
+                    <option value="">Choisissez une catégorie</option>
+                    <!-- Insérez ici toutes les catégories (liste de categories.html) -->
+                    <option>Fondateur de l’Année</option>
+                    <option>Jeune Fondateur de l’Année</option>
+                    <option>Femme Fondatrice de l’Année</option>
+                    <option>Startup Innovante de l’Année</option>
+                    <option>Entreprise à Impact Social</option>
+                    <option>Fondateur dans le Commerce & Import-Export</option>
+                    <option>Fondateur dans la Distribution</option>
+                    <option>Fondateur dans l’E-commerce</option>
+                    <option>Fondateur d’Agence de Communication</option>
+                    <option>Fondateur de Média en Ligne</option>
+                    <option>Fondateur d’Agence de Marketing Digital</option>
+                    <option>Créateur de Plateforme Digitale</option>
+                    <option>Fondateur dans la Mode</option>
+                    <option>Fondateur de Maison de Production</option>
+                    <option>Fondateur d’Entreprise Culturelle</option>
+                    <option>Fondateur d’Entreprise Immobilière</option>
+                    <option>Fondateur dans le BTP</option>
+                    <option>Fondateur de Restaurant</option>
+                    <option>Fondateur d’Hôtel</option>
+                    <option>Fondateur Agence Event & Wedding Planning</option>
+                    <option>Fondateur de Startup Tech</option>
+                    <option>Innovation Technologique de l’Année</option>
+                    <option>Prix Leadership Inspirant</option>
+                    <option>Prix Impact Communautaire</option>
+                    <option>Prix Carrière Exemplaire</option>
+                    <option>Prix Révélation de l’Année</option>
+                </select>
+
+                <h3>Présentation</h3>
+                <textarea name="description" placeholder="Description de l'entreprise" required></textarea>
+                <textarea name="motivation" placeholder="Pourquoi méritez-vous ce prix ?" required></textarea>
+
+                <h3>Médias</h3>
+                <label>Photo du fondateur :</label>
+                <input type="file" name="photo" accept="image/*" required>
+                <label>Logo de l'entreprise :</label>
+                <input type="file" name="logo" accept="image/*" required>
+
+                <h3>Réseaux sociaux (facultatif)</h3>
+                <input type="url" name="siteweb" placeholder="Site web">
+                <input type="url" name="facebook" placeholder="Facebook">
+                <input type="url" name="instagram" placeholder="Instagram">
+                <input type="url" name="linkedin" placeholder="LinkedIn">
+
+                <button type="submit">Soumettre ma candidature</button>
+            </form>
+            <div id="registerMessage"></div>
+        </section>
+    </main>
+
+    <footer>...</footer>
+    <script src="js/main.js"></script>
+</body>
+</html>
